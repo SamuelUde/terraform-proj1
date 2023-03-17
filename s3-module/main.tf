@@ -1,7 +1,7 @@
 #1. Create s3 bucket for state storage
 resource "aws_s3_bucket" "env_backend" {
   bucket = "Bootcamp29-${random_integer.bucket_name.result}-${var.name}"
-
+  count = var.create_bucket ? 1 : 0
   /*tags = {
     Name        = "My bucket"
     Environment = "Dev"
@@ -9,15 +9,15 @@ resource "aws_s3_bucket" "env_backend" {
 }
 
 #2. Bucket ACL
-resource "aws_s3_bucket_acl" "example" {
-  bucket = aws_s3_bucket.env_backend.id
+resource "aws_s3_bucket_acl" "acl" {
+  bucket = aws_s3_bucket.env_backend[0].id
   acl    = var.acl
 }
 
 #3. Bucket versioning
 
-resource "aws_s3_bucket_versioning" "versioning_example" {
-  bucket = aws_s3_bucket.env_backend.id
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.env_backend[0].id
   versioning_configuration {
     status = var.versioning
   }
@@ -45,6 +45,17 @@ resource "aws_s3_bucket" "mybucket" {
     }
   }
 }
+resource "aws_s3_bucket_server_side_encryption_configuration" "encrypt" {
+  bucket = aws_s3_bucket.env_backend[0].id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.mykey.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
 #5. Bucket encryption with KMS
 resource "aws_kms_key" "mykey" {
   description             = "This key is used to encrypt bucket objects"

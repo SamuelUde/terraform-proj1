@@ -1,24 +1,29 @@
 variable "name" {
   type    = string
-  default = "samude"
+  #default = "samude"
 }
 
 variable "acl" {
   type    = string
-  default = "private"
+  #default = "private"
 }
 
 variable "versioning" {
   type    = string
-  default = "Enabled"
+  #default = "Enabled"
 }
 
 variable "mykey_expiring" {
   type    = number
-  default = "10"
+  #default = "10"
+}
+
+variable "create_bucket" {
+  type = bool
+  #default = true
 }
 
 variable "region" {
   type    = string
-  default = "eu-north-1"
+  #default = "eu-north-1"
 }
